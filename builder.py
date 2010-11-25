@@ -8,14 +8,6 @@ import subprocess
 
 class BuildyBuilder:
 
-    def __init__(self):
-        pass
-
-    def build(self, buildfile):
-        raise NonImplementedError, "This method should be overridden!"
-
-class BuildyDebian:
-
     def __init__(self, builder_name, project, config, orig, vcs_obj):
         self.builder_name = builder_name
         self.project = project
@@ -28,12 +20,21 @@ class BuildyDebian:
         self.work_dir = self.config.get(project, 'work-dir')
         self.path = os.path.join(self.work_dir, 'build')
         self.vcs_obj = vcs_obj
+        self.buildresult = self.config.get(self.builder_name, 'output-dir')
+        self.buildbase = self.config.get(self.builder_name, 'buildbase')
+        
+
+    def build(self, buildfile):
+        raise NonImplementedError, "This method should be overridden!"
+
+class BuildyDebian(BuildyBuilder):
+
+    def __init__(self, builder_name, project, config, orig, vcs_obj):
+        BuildyBuilder.__init__(self, builder_name, project, config, orig, vcs_obj)
         self.changelog_distribution = self.config.get(self.builder_name, 'changelog-distribution')
         self.changelog_urgency = self.config.get(self.builder_name, 'changelog-urgency')
         self.changelog_author = self.config.get(self.builder_name, 'changelog-author')
         self.changelog_entry = self.config.get(self.builder_name, 'changelog-entry')
-        self.buildresult = self.config.get(self.builder_name, 'output-dir')
-        self.buildbase = self.config.get(self.builder_name, 'buildbase')
         self.buildfile = None
         self.builderbinary = None
         self.builderoptions = None
