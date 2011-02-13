@@ -1,7 +1,6 @@
 import os
 import shutil
 import tarfile
-import tempfile
 import datetime
 import debian.changelog
 import subprocess
@@ -24,8 +23,8 @@ class BuildyBuilder:
         self.buildbase = self.config.get(self.builder_name, 'buildbase')
 
 
-    def build(self, buildfile):
-        raise NonImplementedError, "This method should be overridden!"
+    def build(self):
+        raise NotImplementedError, "This method should be overridden!"
 
 class BuildyDebian(BuildyBuilder):
 
@@ -76,6 +75,7 @@ class BuildyDebian(BuildyBuilder):
         print os.path.abspath('.')
         retcode = subprocess.call(["dpkg-buildpackage", "-us", "-uc", "-S"])
         self.buildfile = os.path.join(self.path, '%s_%s.dsc' % (self.name, new_version))
+        return retcode
 
     def build(self):
         if not self.builderbinary:
@@ -83,6 +83,7 @@ class BuildyDebian(BuildyBuilder):
         if not self.buildfile:
             raise IOError, "What should I build?"
         retcode = subprocess.call(self.builderbinary + self.builderoptions + [self.buildfile])
+        return retcode
 
 class BuildyDebianPbuilder(BuildyDebian):
 
@@ -93,6 +94,6 @@ class BuildyDebianPbuilder(BuildyDebian):
 class BuildyDebianCowBuilder(BuildyDebianPbuilder):
 
     def __init__(self, builder_name, project, c, orig, vcs_obj):
-        BuildyDebian.__init__(self, builder_name, project, c, orig, vcs_obj)
+        BuildyDebianPbuilder.__init__(self, builder_name, project, c, orig, vcs_obj)
         self.builderoptions = ['--build', '--basepath', self.buildbase, '--buildresult', self.buildresult]
 

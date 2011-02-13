@@ -1,5 +1,4 @@
 import os
-import tempfile
 import datetime
 
 import pysvn
@@ -18,6 +17,7 @@ class BuildyVCS:
         self.work_dir = self.config.get(project, 'work-dir')
         self.path = os.path.join(self.work_dir, 'vcs', self.name)
         self.info = None
+        self.client = None
 
     def update(self):
         raise NotImplementedError, "This method should be overridden!"
@@ -81,6 +81,7 @@ class BuildyGit(BuildyVCS):
 
     def __init__(self, project, config):
         BuildyVCS.__init__(self, project, config)
+        self.repo = None
 
     def update(self):
         if os.path.exists(self.path):
