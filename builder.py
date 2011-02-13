@@ -34,7 +34,7 @@ class BuildyDebian(BuildyBuilder):
         self.changelog_urgency = self.config.get(self.builder_name, 'changelog-urgency')
         self.changelog_author = self.config.get(self.builder_name, 'changelog-author')
         self.changelog_entry = self.config.get(self.builder_name, 'changelog-entry')
-        self.builderbinary = self.config.get(self.builder_name, 'builder_command').split()
+        self.builderbinary = self.config.get(self.builder_name, 'builder-command').split()
         self.buildfile = None
         self.builderoptions = None
 
