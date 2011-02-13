@@ -74,7 +74,7 @@ class BuildySVN(BuildyVCS):
         return 'svn%s' % self.get_revision()
 
     def get_useful_filename(self):
-        f = '%s_%s+svn%s' % (self.name, self.version, self.get_revision())
+        f = '%s-%s+svn%s' % (self.name, self.version, self.get_revision())
         return f
 
 class BuildyGit(BuildyVCS):
@@ -111,5 +111,5 @@ class BuildyGit(BuildyVCS):
         return '%sgit%s' % (date, self.get_revision())
 
     def get_useful_filename(self):
-        f = '%s_%s+%s' % (self.name, self.version, self.get_fancy_revision())
+        f = '%s-%s+%s' % (self.name, self.version, self.get_fancy_revision())
         return f
