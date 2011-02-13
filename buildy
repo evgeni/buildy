@@ -2,13 +2,13 @@
 # -*- coding: utf-8 -*-
 #
 #  buildy
-#  
+#
 #  Copyright 2010 Evgeni Golov <evgeni@debian.org>
-#  
+#
 #  Redistribution and use in source and binary forms, with or without
 #  modification, are permitted provided that the following conditions are
 #  met:
-#  
+#
 #  * Redistributions of source code must retain the above copyright
 #    notice, this list of conditions and the following disclaimer.
 #  * Redistributions in binary form must reproduce the above
@@ -18,7 +18,7 @@
 #  * Neither the name of the  nor the names of its
 #    contributors may be used to endorse or promote products derived from
 #    this software without specific prior written permission.
-#  
+#
 #  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 #  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 #  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -30,7 +30,7 @@
 #  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 #  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 #  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#  
+#
 
 import vcs
 import builder
@@ -53,7 +53,7 @@ for project in projects:
         path = os.path.join(work_dir, d)
         if not os.path.isdir(path):
             os.makedirs(path)
-    
+
     vcs_type = config.get(project, 'vcs')
     builders = config.get(project, 'builders').split(',')
 
@@ -66,22 +66,26 @@ for project in projects:
     vcs_obj.update()
     filename = os.path.join(work_dir, 'export', '%s.tar.gz' % vcs_obj.get_usefull_filename())
     vcs_obj.export(filename, 'gz')
-    
-    for builder_name in builders:
-        builder_name = builder_name.strip()
-        distribution = config.get(builder_name, 'distribution')
-        build_type = config.get(builder_name, 'builder')
-        if distribution == 'debian':
-            if build_type == 'cowbuilder':
-                builder_obj = builder.BuildyDebianCowBuilder(builder_name, project, config, filename, vcs_obj)
-            elif build_type == 'pbuilder':
-                builder_obj = builder.BuildyDebianPbuilder(builder_name, project, config, filename, vcs_obj)
-            else:
-                raise NotImplementedError, "What?"
-        else:
-            raise NotImplementedError, "What?"
-        builder_obj.prepare()
-        builder_obj.build()
-        shutil.rmtree(os.path.join(work_dir, 'build'))
-        os.makedirs(os.path.join(work_dir, 'build'))
-    shutil.rmtree(os.path.join(work_dir, 'export'))
+
+    try:
+        for builder_name in builders:
+            try:
+                builder_name = builder_name.strip()
+                distribution = config.get(builder_name, 'distribution')
+                build_type = config.get(builder_name, 'builder')
+                if distribution == 'debian':
+                    if build_type == 'cowbuilder':
+                        builder_obj = builder.BuildyDebianCowBuilder(builder_name, project, config, filename, vcs_obj)
+                    elif build_type == 'pbuilder':
+                        builder_obj = builder.BuildyDebianPbuilder(builder_name, project, config, filename, vcs_obj)
+                    else:
+                        raise NotImplementedError, "What?"
+                else:
+                    raise NotImplementedError, "What?"
+                builder_obj.prepare()
+                builder_obj.build()
+            finally:
+                shutil.rmtree(os.path.join(work_dir, 'build'))
+                os.makedirs(os.path.join(work_dir, 'build'))
+    finally:
+        shutil.rmtree(os.path.join(work_dir, 'export'))
