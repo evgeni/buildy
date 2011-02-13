@@ -35,8 +35,8 @@ class BuildyDebian(BuildyBuilder):
         self.changelog_urgency = self.config.get(self.builder_name, 'changelog-urgency')
         self.changelog_author = self.config.get(self.builder_name, 'changelog-author')
         self.changelog_entry = self.config.get(self.builder_name, 'changelog-entry')
+        self.builderbinary = self.config.get(self.builder_name, 'builder_command').split()
         self.buildfile = None
-        self.builderbinary = None
         self.builderoptions = None
 
     def prepare(self):
@@ -82,19 +82,17 @@ class BuildyDebian(BuildyBuilder):
             raise NotImplementedError, "I don't know which builder to call."
         if not self.buildfile:
             raise IOError, "What should I build?"
-        retcode = subprocess.call([self.builderbinary] + self.builderoptions + [self.buildfile])
+        retcode = subprocess.call(self.builderbinary + self.builderoptions + [self.buildfile])
 
 class BuildyDebianPbuilder(BuildyDebian):
 
     def __init__(self, builder_name, project, c, orig, vcs_obj):
         BuildyDebian.__init__(self, builder_name, project, c, orig, vcs_obj)
-        self.builderbinary = 'pbuilder'
         self.builderoptions = ['--build', '--basetgz', self.buildbase, '--buildresult', self.buildresult]
 
 class BuildyDebianCowBuilder(BuildyDebianPbuilder):
 
     def __init__(self, builder_name, project, c, orig, vcs_obj):
         BuildyDebian.__init__(self, builder_name, project, c, orig, vcs_obj)
-        self.builderbinary = 'cowbuilder'
         self.builderoptions = ['--build', '--basepath', self.buildbase, '--buildresult', self.buildresult]
 
