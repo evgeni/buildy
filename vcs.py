@@ -37,7 +37,7 @@ class BuildyVCS:
     def get_fancy_revision(self):
         raise NotImplementedError, "This method should be overridden!"
 
-    def get_usefull_filename(self):
+    def get_useful_filename(self):
         raise NotImplementedError, "This method should be overridden!"
 
 class BuildySVN(BuildyVCS):
@@ -55,7 +55,7 @@ class BuildySVN(BuildyVCS):
 
     def export(self, filename, filetype):
         exportpath = os.path.join(self.work_dir, 'export')
-        exportpath = os.path.join(exportpath, self.get_usefull_filename())
+        exportpath = os.path.join(exportpath, self.get_useful_filename())
         if filetype not in ['', 'gz', 'bz2']:
             raise NotImplementedError, "Only plain tar, gz and bz2 files are supported for now."
         self.client.export(self.path, exportpath)
@@ -73,7 +73,7 @@ class BuildySVN(BuildyVCS):
     def get_fancy_revision(self):
         return 'svn%s' % self.get_revision()
 
-    def get_usefull_filename(self):
+    def get_useful_filename(self):
         f = '%s_%s+svn%s' % (self.name, self.version, self.get_revision())
         return f
 
@@ -98,9 +98,9 @@ class BuildyGit(BuildyVCS):
         if filetype not in ['', 'gz']:
             raise NotImplementedError, "Only plain tar and gz files are supported for now."
         if filetype == '':
-            f.write(self.repo.archive_tar(prefix='%s/' % self.get_usefull_filename()))
+            f.write(self.repo.archive_tar(prefix='%s/' % self.get_useful_filename()))
         elif filetype == 'gz':
-            f.write(self.repo.archive_tar_gz(prefix='%s/' % self.get_usefull_filename()))
+            f.write(self.repo.archive_tar_gz(prefix='%s/' % self.get_useful_filename()))
         f.close()
 
     def get_revision(self):
@@ -110,6 +110,6 @@ class BuildyGit(BuildyVCS):
         date = datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d")
         return '%sgit%s' % (date, self.get_revision())
 
-    def get_usefull_filename(self):
+    def get_useful_filename(self):
         f = '%s_%s+%s' % (self.name, self.version, self.get_fancy_revision())
         return f

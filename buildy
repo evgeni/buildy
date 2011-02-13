@@ -64,7 +64,7 @@ for project in projects:
     else:
         raise NotImplementedError, "What?"
     vcs_obj.update()
-    filename = os.path.join(work_dir, 'export', '%s.tar.gz' % vcs_obj.get_usefull_filename())
+    filename = os.path.join(work_dir, 'export', '%s.tar.gz' % vcs_obj.get_useful_filename())
     vcs_obj.export(filename, 'gz')
 
     try:

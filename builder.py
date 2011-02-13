@@ -12,7 +12,7 @@ class BuildyBuilder:
         self.builder_name = builder_name
         self.project = project
         self.config = config
-        
+
         self.name = self.config.get(project, 'name')
         self.version = self.config.get(project, 'version')
         self.orig = orig
@@ -22,7 +22,7 @@ class BuildyBuilder:
         self.vcs_obj = vcs_obj
         self.buildresult = self.config.get(self.builder_name, 'output-dir')
         self.buildbase = self.config.get(self.builder_name, 'buildbase')
-        
+
 
     def build(self, buildfile):
         raise NonImplementedError, "This method should be overridden!"
@@ -55,8 +55,8 @@ class BuildyDebian(BuildyBuilder):
             raise NotImplementedError, "Only .gz and .bz2 tarballs are supported!"
         shutil.copy2(self.orig, os.path.join(self.path, final_orig))
         # copy the packaging template to the exctracted tarball
-        shutil.copytree(self.template, os.path.join(self.vcs_obj.get_usefull_filename(), 'debian'))
-        os.chdir(self.vcs_obj.get_usefull_filename())
+        shutil.copytree(self.template, os.path.join(self.vcs_obj.get_useful_filename(), 'debian'))
+        os.chdir(self.vcs_obj.get_useful_filename())
         # add new changelog entry
         cf = open('./debian/changelog', "r")
         changelog = debian.changelog.Changelog(cf)
@@ -85,12 +85,12 @@ class BuildyDebian(BuildyBuilder):
         retcode = subprocess.call([self.builderbinary] + self.builderoptions + [self.buildfile])
 
 class BuildyDebianPbuilder(BuildyDebian):
-    
+
     def __init__(self, builder_name, project, c, orig, vcs_obj):
         BuildyDebian.__init__(self, builder_name, project, c, orig, vcs_obj)
         self.builderbinary = 'pbuilder'
         self.builderoptions = ['--build', '--basetgz', self.buildbase, '--buildresult', self.buildresult]
-        
+
 class BuildyDebianCowBuilder(BuildyDebianPbuilder):
 
     def __init__(self, builder_name, project, c, orig, vcs_obj):
