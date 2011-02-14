@@ -34,7 +34,10 @@ class BuildyDebian(BuildyBuilder):
         self.changelog_urgency = self.config.get(self.builder_name, 'changelog-urgency')
         self.changelog_author = self.config.get(self.builder_name, 'changelog-author')
         self.changelog_entry = self.config.get(self.builder_name, 'changelog-entry')
-        self.builderbinary = self.config.get(self.builder_name, 'builder-command').split()
+        if self.config.has_option(self.builder_name, 'builder-command'):
+            self.builderbinary = self.config.get(self.builder_name, 'builder-command').split()
+        else:
+            self.builderbinary = []
         self.buildfile = None
         self.builderoptions = None
 
@@ -89,11 +92,15 @@ class BuildyDebianPbuilder(BuildyDebian):
 
     def __init__(self, builder_name, project, c, orig, vcs_obj):
         BuildyDebian.__init__(self, builder_name, project, c, orig, vcs_obj)
+        if not self.builderbinary:
+            self.builderbinary = ['pbuilder']
         self.builderoptions = ['--build', '--basetgz', self.buildbase, '--buildresult', self.buildresult]
 
 class BuildyDebianCowBuilder(BuildyDebianPbuilder):
 
     def __init__(self, builder_name, project, c, orig, vcs_obj):
-        BuildyDebianPbuilder.__init__(self, builder_name, project, c, orig, vcs_obj)
+        BuildyDebian.__init__(self, builder_name, project, c, orig, vcs_obj)
+        if not self.builderbinary:
+            self.builderbinary = ['cowbuilder']
         self.builderoptions = ['--build', '--basepath', self.buildbase, '--buildresult', self.buildresult]
 
