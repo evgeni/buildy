@@ -92,20 +92,37 @@ class BuildyGit(BuildyVCS):
             self.client.clone(self.repository, self.path)
             self.client = git.Git(self.path)
         self.repo = git.Repo(self.path)
-        #self.info = self.client.info(self.path)
+    self.useheadforname = self.repo.heads[0]
+
+    # check if we are using a branch
+    if self.config.has_option(self.project, 'vcs-git-branch'):
+        branchstring = self.config.get(self.project, 'vcs-git-branch')
+            print "Attempting to use branch: " + branchstring
+        g = git.Git(self.path)
+        try:
+            g.checkout(branchstring)
+            except git.errors.GitCommandError:
+                print "Error while attempting to checkout branch %s " % (branchstring)
+                # TODO: dunno what to do here, checkout of branch failed.
+
+        # TODO: perhaps there is a better way to get the item, returns a git.IterableList ... index(...) does not seem to work here ...
+        for h in self.repo.heads:
+            if h.name == branchstring:
+                print "Branch %s found" % (h.name)
+                self.useheadforname = h
 
     def export(self, filename, filetype):
         f = open(filename, "w")
         if filetype not in ['', 'gz']:
             raise NotImplementedError, "Only plain tar and gz files are supported for now."
         if filetype == '':
-            f.write(self.repo.archive_tar(prefix='%s/' % self.get_useful_filename()))
+            f.write(self.repo.archive_tar(self.useheadforname.name, prefix='%s/' % self.get_useful_filename()))
         elif filetype == 'gz':
-            f.write(self.repo.archive_tar_gz(prefix='%s/' % self.get_useful_filename()))
+            f.write(self.repo.archive_tar_gz(self.useheadforname.name, prefix='%s/' % self.get_useful_filename()))
         f.close()
 
     def get_revision(self):
-        return self.repo.heads[0].commit.id_abbrev
+        return self.useheadforname.commit.id_abbrev
 
     def get_fancy_revision(self):
         date = datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d")
@@ -114,3 +131,4 @@ class BuildyGit(BuildyVCS):
     def get_useful_filename(self):
         f = '%s-%s+%s' % (self.name, self.version, self.get_fancy_revision())
         return f
+
