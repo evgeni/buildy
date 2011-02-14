@@ -16,17 +16,17 @@ Currently buildy supports SVN and Git as VCS.
 You just have to specify the repository and vcs-type in the config:
 
 SVN:
-  vcs = svn
-  vcs-url = https://geany.svn.sourceforge.net/svnroot/geany/trunk
+    vcs = svn
+    vcs-url = https://geany.svn.sourceforge.net/svnroot/geany/trunk
 
 Git:
-  vcs = git
-  vcs-url = git://github.com/evgeni/bley.git
+    vcs = git
+    vcs-url = git://github.com/evgeni/bley.git
 
 Git with a specified branch (not master):
-  vcs = git
-  vcs-url = git://hades.mount.at/siyb/tbar
-  vcs-git-branch = 1.3
+    vcs = git
+    vcs-url = git://hades.mount.at/siyb/tbar
+    vcs-git-branch = 1.3
 
 2. Distributions
 ----------------
