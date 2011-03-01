@@ -92,24 +92,24 @@ class BuildyGit(BuildyVCS):
             self.client.clone(self.repository, self.path)
             self.client = git.Git(self.path)
         self.repo = git.Repo(self.path)
-    self.useheadforname = self.repo.heads[0]
+        self.useheadforname = self.repo.heads[0]
 
-    # check if we are using a branch
-    if self.config.has_option(self.project, 'vcs-git-branch'):
-        branchstring = self.config.get(self.project, 'vcs-git-branch')
+        # check if we are using a branch
+        if self.config.has_option(self.project, 'vcs-git-branch'):
+            branchstring = self.config.get(self.project, 'vcs-git-branch')
             print "Attempting to use branch: " + branchstring
-        g = git.Git(self.path)
-        try:
-            g.checkout(branchstring)
+            g = git.Git(self.path)
+            try:
+                g.checkout(branchstring)
             except git.errors.GitCommandError:
                 print "Error while attempting to checkout branch %s " % (branchstring)
                 # TODO: dunno what to do here, checkout of branch failed.
 
-        # TODO: perhaps there is a better way to get the item, returns a git.IterableList ... index(...) does not seem to work here ...
-        for h in self.repo.heads:
-            if h.name == branchstring:
-                print "Branch %s found" % (h.name)
-                self.useheadforname = h
+            # TODO: perhaps there is a better way to get the item, returns a git.IterableList ... index(...) does not seem to work here ...
+            for h in self.repo.heads:
+                if h.name == branchstring:
+                    print "Branch %s found" % (h.name)
+                    self.useheadforname = h
 
     def export(self, filename, filetype):
         f = open(filename, "w")
