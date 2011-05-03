@@ -1,4 +1,5 @@
 import os
+import shlex
 import shutil
 import tarfile
 import datetime
@@ -38,6 +39,11 @@ class BuildyDebian(BuildyBuilder):
             self.builderbinary = self.config.get(self.builder_name, 'builder-command').split()
         else:
             self.builderbinary = []
+        if self.config.has_option(self.builder_name, 'builder-arguments'):
+            builderarguments = self.config.get(self.builder_name, 'builder-arguments')
+            self.builderarguments = shlex.split(builderarguments)
+        else:
+            self.builderarguments = []
         self.buildfile = None
         self.builderoptions = None
 
@@ -85,7 +91,7 @@ class BuildyDebian(BuildyBuilder):
             raise NotImplementedError, "I don't know which builder to call."
         if not self.buildfile:
             raise IOError, "What should I build?"
-        retcode = subprocess.call(self.builderbinary + self.builderoptions + [self.buildfile])
+        retcode = subprocess.call(self.builderbinary + self.builderoptions + self.builderarguments + [self.buildfile])
         return retcode
 
 class BuildyDebianPbuilder(BuildyDebian):
