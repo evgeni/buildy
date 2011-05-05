@@ -27,6 +27,13 @@ class BuildyBuilder:
     def build(self):
         raise NotImplementedError, "This method should be overridden!"
 
+    def create_build_env(self):
+        revision = self.vcs_obj.get_revision()
+        return dict(
+            BUILDY_PROJECT_NAME=self.name,
+            BUILDY_PROJECT_VERSION=self.version,
+            BUILDY_REVISION=revision)
+
 class BuildyDebian(BuildyBuilder):
 
     def __init__(self, builder_name, project, config, orig, vcs_obj):
@@ -82,7 +89,8 @@ class BuildyDebian(BuildyBuilder):
         cf.close()
         # build a source package
         print os.path.abspath('.')
-        retcode = subprocess.call(["dpkg-buildpackage", "-us", "-uc", "-S"])
+        buildy_env = self.create_build_env()
+        retcode = subprocess.call(["dpkg-buildpackage", "-us", "-uc", "-S"], env=buildy_env)
         self.buildfile = os.path.join(self.path, '%s_%s.dsc' % (self.name, new_version))
         return retcode
 
@@ -91,7 +99,9 @@ class BuildyDebian(BuildyBuilder):
             raise NotImplementedError, "I don't know which builder to call."
         if not self.buildfile:
             raise IOError, "What should I build?"
-        retcode = subprocess.call(self.builderbinary + self.builderoptions + self.builderarguments + [self.buildfile])
+        buildy_env = self.create_build_env()
+        command = self.builderbinary + self.builderoptions + self.builderarguments + [self.buildfile]
+        retcode = subprocess.call(command, env=buildy_env)
         return retcode
 
 class BuildyDebianPbuilder(BuildyDebian):
