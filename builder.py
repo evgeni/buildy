@@ -88,7 +88,7 @@ class BuildyDebian(BuildyBuilder):
         cf_new.close()
         cf.close()
         # build a source package
-        print os.path.abspath('.')
+        #print os.path.abspath('.')
         buildy_env = self.create_build_env()
         retcode = subprocess.call(["dpkg-buildpackage", "-us", "-uc", "-S"], env=buildy_env)
         self.buildfile = os.path.join(self.path, '%s_%s.dsc' % (self.name, new_version))
