@@ -29,10 +29,12 @@ class BuildyBuilder:
 
     def create_build_env(self):
         revision = self.vcs_obj.get_revision()
-        return dict(
+        environment = dict(os.environ)
+        buildy_environment = dict(
             BUILDY_PROJECT_NAME=str(self.name),
             BUILDY_PROJECT_VERSION=str(self.version),
             BUILDY_REVISION=str(revision))
+        return environment.update(buildy_environment)
 
 class BuildyDebian(BuildyBuilder):
 
