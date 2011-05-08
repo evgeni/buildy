@@ -34,7 +34,8 @@ class BuildyBuilder:
             BUILDY_PROJECT_NAME=str(self.name),
             BUILDY_PROJECT_VERSION=str(self.version),
             BUILDY_PROJECT_REVISION=str(revision))
-        return environment.update(buildy_environment)
+        environment.update(buildy_environment)
+        return environment
 
 class BuildyDebian(BuildyBuilder):
 
