@@ -30,9 +30,9 @@ class BuildyBuilder:
     def create_build_env(self):
         revision = self.vcs_obj.get_revision()
         return dict(
-            BUILDY_PROJECT_NAME=self.name,
-            BUILDY_PROJECT_VERSION=self.version,
-            BUILDY_REVISION=revision)
+            BUILDY_PROJECT_NAME=str(self.name),
+            BUILDY_PROJECT_VERSION=str(self.version),
+            BUILDY_REVISION=str(revision))
 
 class BuildyDebian(BuildyBuilder):
 
