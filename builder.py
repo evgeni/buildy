@@ -33,7 +33,7 @@ class BuildyBuilder:
         buildy_environment = dict(
             BUILDY_PROJECT_NAME=str(self.name),
             BUILDY_PROJECT_VERSION=str(self.version),
-            BUILDY_REVISION=str(revision))
+            BUILDY_PROJECT_REVISION=str(revision))
         return environment.update(buildy_environment)
 
 class BuildyDebian(BuildyBuilder):
